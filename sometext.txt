@@ -1,0 +1,286 @@
+pat = patricia99
+lewis = 1234567898
+john = bread123
+
+
+<select>
+        <option selected disabled>Select Wallet</option>
+            @forelse (auth()->user()->wallets as $data)
+                    <option value="{{ $data }}">{{ $data->name}}</option>
+                    @empty
+                    <option selected disabled>No class room found.</option>
+            @endforelse
+</select>
+
+public function trans(Request $request)
+        {
+            $user = User::where('number', $request->recnum)
+            ->where('name', $request->wallet)
+            ->first();
+            if($user)
+            {
+                $wallet = $user->wallets()->find($request->wallet);
+
+                if ($wallet) 
+                   {
+                    $wallet->withdraw($request->amount);
+                   }
+                $receiver = User::where('number', $request->repnum)->first();
+                if ($receiver) 
+                   {
+                    $receiver->deposit($request->amount, ['description' => $request->notes], true);
+                    Toast::title($request->amount.' money sent successfully')->autoDismiss(5);
+                    return back();
+                   }
+                }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();             
+        }
+
+        <?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Wallet;
+// use App\Models\Wallet;
+use ProtoneMedia\Splade\Facades\Toast;
+
+class UsersController extends Controller
+{
+        public function deposite(Request $request)
+        {
+            $user = User::where('number', $request->recnum)->first();
+            if ($user) {
+                $user->deposit($request->amount, ['description' => $request->notes], true);
+                Toast::title($request->amount.' deposited successfully')->autoDismiss(5);
+                return back();
+            }
+
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();
+
+        }
+
+        public function withdrawn(Request $request)
+        {
+            $user = User::where('number', $request->recnum)->first();
+            if ($user) {  
+             
+                $user->withdraw($request->amount);
+                Toast::title($request->amount.' withdrawn successfully')->autoDismiss(5);
+                return back();
+            }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();
+        }
+   
+        public function trans(Request $request)
+        {
+            // Find the user
+            $user = User::where('number', $request->recnum)->first();
+            
+            // If user found
+            if ($user) {
+                // Get the wallet of the user
+                $wallet = $user->wallet;
+                
+                // Ensure the wallet exists
+                if ($wallet) {
+                    // Deduct the requested amount from the "SAVINGS" wallet
+                    $amountWithdrawn = $wallet->withdraw($request->amount, [
+                        'name' => 'SAVINGS',
+                    ]);
+                    
+                    // Check if the amount is withdrawn successfully
+                    if ($amountWithdrawn) {
+                        // Find the receiver
+                        $receiver = User::where('number', $request->repnum)->first();
+                        
+                        // If receiver found
+                        if ($receiver) {
+                            // Deposit the amount to the receiver's wallet
+                            $receiver->deposit($request->amount, ['description' => $request->notes], true);
+                            Toast::title($request->amount . ' money sent successfully')->autoDismiss(5);
+                            return back();
+                        }
+                    }
+                }
+            }
+            
+            Toast::danger($request->amount . ' transaction failed')->autoDismiss(5);
+            return back();  
+        }
+        
+        
+
+        public function wal(Request $request)
+        {
+       
+           $user = User::first();
+
+            if ($user->hasWallet('New Wallet')) 
+        {
+           Toast::danger('The user already has a wallet with the specified slug.')->autoDismiss(10);
+           return back();
+        }
+
+       $wallet = $user->createWallet([
+          'name' => $request->name,
+          'slug' => 'New Wallet',
+    ]);
+
+
+    Toast::title('New wallet created successfully.')->autoDismiss(10);
+    return back();
+     }
+
+     public function viewWals(){
+        $data = auth()->user()->wallets;
+        return view('allWallets',compact('data'));
+     }
+
+    //  public function transferWal(Request $request)
+    //  {
+
+    //     $data = User::where('number', $request->recnum)->first();
+    //         if ($data) {
+    //             $data->withdraw($request->amount);
+    //         }
+    //         $reciever  = User::where('number', $request->repnum)->first();
+    //         if ($reciever) {
+
+    //             $reciever->deposit($request->amount, ['description' => $request->notes], true);
+    //             Toast::title($request->amount.' money sent succeffully')->autoDismiss(5);
+    //             return back();
+    //         }
+    //         Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+    //         return back();
+    //  }
+    
+}
+
+
+ public function trans(Request $request)
+        {
+            $user = User::where('number', $request->recnum)
+            ->where('name', $request->name)
+            ->first();
+            if ($user) 
+            {
+                $user->withdraw($request->amount);
+            }
+            $reciever  = User::where('number', $request->repnum)->first();
+            if ($reciever) 
+            {
+
+                $reciever->deposit($request->amount, ['description' => $request->notes], true);
+                Toast::title($request->amount.' money sent succeffully')->autoDismiss(5);
+                return back();
+            }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();  
+        }
+
+
+airing me after i asked how his weekend was.
+
+initial controllers for witthdrawal and deposit
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use ProtoneMedia\Splade\Facades\Toast;
+use Bavix\Wallet\Models\Wallet;
+
+class UsersController extends Controller
+{
+        public function depositMoneyToWallet(Request $request)
+        {
+            $user = User::where('number', $request->recnum)->first();
+            if ($user) {
+                $user->deposit($request->amount, ['description' => $request->notes], true);
+                Toast::title($request->amount.' deposited successfully')->autoDismiss(5);
+                return back();
+            }
+
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();
+
+        }
+
+        public function withdrawMoneyFromWallet(Request $request)
+        {
+            $user = User::first();
+
+            $wallet = Wallet::find($request->wallet);
+            
+            if ($user) {  
+               
+                $user->withdraw($user->wallet, $request->amount);
+                Toast::title($request->amount.' withdrawn successfully')->autoDismiss(5);
+                return back();
+            }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();
+        }
+   
+        public function transferMoneyToOtherUsers(Request $request)
+        {
+            $request->validate([
+                'recnum' => ['required', 'numeric'],
+                'wallet' => ['required', 'exists:wallets,id'],
+                'repnum' => ['required', 'numeric'],
+                'amount' => ['required']
+            ]);
+
+    
+            $sender = User::where('number', $request->recnum)->first();
+            $receiver = User::where('number', $request->repnum)->first();
+
+            $wallet = Wallet::find($request->wallet);
+
+            $myWallet = $sender->getWallet($wallet->slug);
+            // $receiverWallet = $receiver->getWallet('default');
+
+            $myWallet->transfer($receiver->wallet, $request->amount);
+
+            Toast::title("{$request->amount} has been sent to {$receiver->name}.")->autoDismiss(10);
+            return back();
+        }
+        
+        
+        public function createNewWallet(Request $request)
+        {
+       
+           $user = User::first();
+
+            if ($user->hasWallet('New Wallet')) 
+        {
+           Toast::danger('The user already has a wallet with the specified slug.')->autoDismiss(10);
+           return back();
+        }
+
+       $wallet = $user->createWallet([
+          'name' => $request->name,
+          'slug' => 'New Wallet',
+    ]);
+
+
+    Toast::title('New wallet created successfully.')->autoDismiss(10);
+    return back();
+     }
+
+     public function viewAllWallets()
+     {
+        $data = auth()->user()->wallets;
+        return view('allWallets',compact('data'));
+     }
+
+    
+}
+
+  $user = auth()->user()->first;

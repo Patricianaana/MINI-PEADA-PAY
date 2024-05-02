@@ -9,7 +9,15 @@
         <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <x-splade-form action="{{ route('makeTransfer') }}" class="space-y-4 mb-4">
                 <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                    <x-splade-select name="wallet" :label="__('Wallet')" required>
+                    <x-splade-select name="sender_wallet" :label="__('From')" required>
+                        <option selected disabled>Select Wallet</option>
+                        @forelse (auth()->user()->wallets as $data)
+                            <option value="{{ $data->id }}">{{ $data->name }} ({{ $data->balance }})</option>
+                        @empty
+                            <option selected disabled>No wallet found.</option>
+                        @endforelse
+                    </x-splade-select>
+                    <x-splade-select name="reciever_wallet" :label="__('To')" required>
                         <option selected disabled>Select Wallet</option>
                         @forelse (auth()->user()->wallets as $data)
                             <option value="{{ $data->id }}">{{ $data->name }} ({{ $data->balance }})</option>

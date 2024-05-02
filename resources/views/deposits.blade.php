@@ -9,7 +9,7 @@
         <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <x-splade-form action="{{ route('deposite') }}" class="space-y-4 mb-4">
                 <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                    <x-splade-input id="recnum," type="number" name="recnum" :label="__('Your Number')" required autofocus />
+                    {{-- <x-splade-input id="recnum," type="number" name="recnum" :label="__('Your Number')" required autofocus /> --}}
                     <x-splade-select name="wallet" :label="__('Wallet')" required>
                         <option selected disabled>Select Wallet</option>
                         @forelse (auth()->user()->wallets as $data)

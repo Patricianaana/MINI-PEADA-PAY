@@ -78,17 +78,17 @@ Route::middleware('splade')->group(function () {
         });
         
 
-        Route::post('user', [UsersController::class,'depositMoneyToWallet'])->name('deposite');
+        Route::post('user', [UsersController::class, 'depositMoneyToWallet'])->name('deposite');
 
         Route::post('money', [UsersController::class, 'withdrawMoneyFromWallet'])->name('withdrawn');
 
-        Route::post('transfers', [UsersController::class,'transferMoneyToOtherUsers'])->name('trans');
+        Route::post('transfers', [UsersController::class, 'transferMoneyToOtherUsers'])->name('trans');
 
-        Route::post('wallets', [UsersController::class,'createNewWallet'])->name('wal');
+        Route::post('wallets', [UsersController::class, 'createNewWallet'])->name('wal');
 
-        Route::get('card', [UsersController::class,'viewAllWallets'])->name('viewWals');
+        Route::get('card', [UsersController::class, 'viewAllWallets'])->name('viewWals');
 
-        Route::post('walletToWallet', [UsersController::class,'transferToOtherPersonalWallets'])->name('makeTransfer');
+        Route::post('walletToWallet', [UsersController::class, 'walletToWalletMoneyTransfer'])->name('makeTransfer');
         });
         
 

@@ -43,14 +43,11 @@ class UsersController extends Controller
         public function transferMoneyToOtherUsers(Request $request)
         {
             $request->validate([
-                // 'recnum' => ['required', 'numeric'],
                 'wallet' => ['required', 'exists:wallets,id'],
                 'repnum' => ['required', 'numeric'],
                 'amount' => ['required']
             ]);
 
-    
-            // $sender = User::where('number', $request->recnum)->first();
             $sender = User::find(auth()->id());
             $receiver = User::where('number', $request->repnum)->first();
 

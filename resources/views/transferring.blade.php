@@ -17,6 +17,10 @@
                             <option selected disabled>No wallet found.</option>
                         @endforelse
                     </x-splade-select>
+
+                    {{-- <x-splade-select name="currency" :label="__('Currency')" required>
+                        <option selected disabled>Select Currency</option>
+                    </x-splade-select> --}}
                     
                     <x-splade-input id="repnum" type="number" name="repnum" :label="__('Recipient Number')" required />
                    <x-splade-input id="amount" type="number" name="amount" :label="__('Enter Amount ')" required />

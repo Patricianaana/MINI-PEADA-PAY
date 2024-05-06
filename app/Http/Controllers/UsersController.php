@@ -72,6 +72,12 @@ class UsersController extends Controller
         return back();
     }
 
+    if ($user->wallets()->where('name', $request->name)->exists())
+    {
+        Toast::danger('A wallet with the special name already exists.')->autoDismiss(10);
+        return back();
+    }
+
     $wallet = $user->createWallet([
         'name' => $request->name,
         'slug' => $request->slug,

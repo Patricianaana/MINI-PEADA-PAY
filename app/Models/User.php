@@ -10,6 +10,8 @@ use Illuminate\Notifications\Notifiable;
 use Bavix\Wallet\Traits\HasWallet;
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWallets;
+use Bavix\Wallet\Internal\Service\MathServiceInterface;
+use Bavix\Wallet\Services\ExchangeServiceInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

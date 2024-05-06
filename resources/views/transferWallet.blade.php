@@ -17,7 +17,7 @@
                             <option selected disabled>No wallet found.</option>
                         @endforelse
                     </x-splade-select>
-                    <x-splade-select name="reciever_wallet" :label="__('To')" required>
+                    <x-splade-select name="receiver_wallet" :label="__('To')" required>
                         <option selected disabled>Select Wallet</option>
                         @forelse (auth()->user()->wallets as $data)
                             <option value="{{ $data->id }}">{{ $data->name }} ({{ $data->balance }})</option>

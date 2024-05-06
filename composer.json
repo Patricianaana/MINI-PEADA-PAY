@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "bavix/laravel-wallet": "^11.0",
+        
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "protonemedia/laravel-splade-breeze": "^2.5"

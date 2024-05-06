@@ -146,7 +146,7 @@ class UsersController extends Controller
         $yourWallet = $user->getWallet($receiverWallet->slug);
         $yourWallet->deposit($request->amount);
 
-        $myWallet = $user->getWallet($senderWallet);
+        $myWallet = $user->getWallet($senderWallet->slug);
         $myWallet->withdraw($request->amount);
 
         Toast::title("{$request->amount} has been sent to {$receiverWallet->name}.")->autoDismiss(10);

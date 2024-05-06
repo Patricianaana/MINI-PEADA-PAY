@@ -286,3 +286,10 @@ class UsersController extends Controller
   $user = auth()->user()->first;
 
   composer require amrshawky/laravel-currency //For currency convertor
+
+
+  shift@
+  ctrlb
+  ctrll
+
+  

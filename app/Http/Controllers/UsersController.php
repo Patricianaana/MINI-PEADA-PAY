@@ -16,7 +16,7 @@ class UsersController extends Controller
                 'wallet' => ['required', 'exists:wallets,id'],
                 'amount' => ['required']
             ]);
-            $user = User::first();
+            $user = User::find(auth()->id());
             $wallet= Wallet::find($request->wallet);
             $myWallet = $user->getWallet($wallet->slug);
             $myWallet->deposit($request->amount, ['description' => $request->notes], true);
@@ -43,14 +43,15 @@ class UsersController extends Controller
         public function transferMoneyToOtherUsers(Request $request)
         {
             $request->validate([
-                'recnum' => ['required', 'numeric'],
+                // 'recnum' => ['required', 'numeric'],
                 'wallet' => ['required', 'exists:wallets,id'],
                 'repnum' => ['required', 'numeric'],
                 'amount' => ['required']
             ]);
 
     
-            $sender = User::where('number', $request->recnum)->first();
+            // $sender = User::where('number', $request->recnum)->first();
+            $sender = User::find(auth()->id());
             $receiver = User::where('number', $request->repnum)->first();
 
             $wallet = Wallet::find($request->wallet);
@@ -67,24 +68,16 @@ class UsersController extends Controller
 
     public function createNewWallet(Request $request)
 {
-    // $user = auth()->user();
-    // $user = User->auth()->user();
-    $user=auth()->user()->User::first();
-   
-    if (!$user) {
-        // User is not authenticated
-        Toast::danger('User is not authenticated.')->autoDismiss(10);
-        return back();
-    }
 
-    if ($user->hasWallet('New Wallet')) {
-        Toast::danger('The user already has a wallet with the specified slug.')->autoDismiss(10);
+    $user = User::find(auth()->id());
+    if ($user->wallets()->where('slug', $request->slug)->exists()) {
+        Toast::danger('A wallet with the specified slug already exists.')->autoDismiss(10);
         return back();
     }
 
     $wallet = $user->createWallet([
         'name' => $request->name,
-        'slug' => 'New Wallet',
+        'slug' => $request->slug,
     ]);
 
     Toast::title('New wallet created successfully.')->autoDismiss(10);
@@ -98,38 +91,6 @@ class UsersController extends Controller
         return view('allWallets',compact('data'));
      }
 
-//      public function walletToWalletMoneyTransfer(Request $request)
-// {
-//     $request->validate([
-//         'receiver_wallet' => ['required', 'exists:wallets,name'],
-//         'sender_wallet' => ['required', 'exists:wallets,name'],
-//         'amount' => ['required', 'numeric', 'gt:0']
-//     ]);
-
-//     // Retrieve the authenticated user
-//     $user = auth()->user();
-
-//     // Find the sender and receiver wallets by name
-//     $receiverWallet = Wallet::where('name', $request->receiver_wallet)->first();
-//     $senderWallet = Wallet::where('name', $request->sender_wallet)->first();
-
-//     // Check if sender and receiver wallets belong to the same user
-//     // if ($senderWallet->holder_id!== $user->id || $receiverWallet->holder_id!== $user->id) {
-//     //     Toast::danger("Sender and receiver wallets must belong to the same user.")->autoDismiss(10);
-//     //     return back();
-//     // }
-
-//     // Perform the deposit and withdrawal operations
-//     $yourWallet = $user->getWallet($receiverWallet->slug);
-//     $yourWallet->deposit($request->amount);
-
-//     $myWallet = $user->getWallet($senderWallet->slug);
-//     $myWallet->withdraw($request->amount);
-
-//     Toast::title("{$request->amount} has been sent to {$receiverWallet->name}.")->autoDismiss(5);
-//     return back();
-// }
-
      public function walletToWalletMoneyTransfer (Request $request)
      {
         $request->validate([
@@ -138,7 +99,7 @@ class UsersController extends Controller
             'amount' => ['required']
         ]);
 
-        $user = User::first();
+        $user = User::find(auth()->id());
 
         $receiverWallet= Wallet::find($request->receiver_wallet);
         $senderWallet = Wallet::find($request->sender_wallet);

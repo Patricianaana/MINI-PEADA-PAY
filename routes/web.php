@@ -89,7 +89,7 @@ Route::middleware('splade')->group(function () {
         });
         
 
-        Route::post('user', [UsersController::class, 'depositMoneyToWallet'])->name('deposite');
+        // Route::post('user', [UsersController::class, 'depositMoneyToWallet'])->name('deposite');
 
         Route::post('money', [UsersController::class, 'withdrawMoneyFromWallet'])->name('withdrawn');
 

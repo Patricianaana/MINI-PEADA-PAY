@@ -1,31 +1,33 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Deposit') }}
+            {{ __('Deposits') }}
         </h2>
     </x-slot>
-
     <section class="py-10 bg-blue-50 leading-6 text-blue-900 sm:py-16 lg:py-24">
-        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <x-splade-form action="{{ route('deposite') }}" class="space-y-4 mb-4">
-                <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                    {{-- <x-splade-input id="recnum," type="number" name="recnum" :label="__('Your Number')" required autofocus /> --}}
-                    <x-splade-select name="wallet" :label="__('Wallet')" required>
-                        <option selected disabled>Select Wallet</option>
-                        @forelse (auth()->user()->wallets as $data)
-                            <option value="{{ $data->id }}">{{ $data->name }} ({{ $data->balance }})</option>
-                        @empty
-                            <option selected disabled>No wallet found.</option>
-                        @endforelse
-                    </x-splade-select>
-                <x-splade-input id="amount" type="number" name="amount" :label="__('Amount')" required />
-                <x-splade-input id="notes" type="text" name="notes" :label="__('Notes')" required />
-                <div class="flex items-center justify-center mt-2">
-                    <x-splade-submit class="ml-4" :label="__('Send')" />
+        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">      
+          <div class="mt-8 grid  grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 md:gap-8 lg:mt-16">
+            <a href="defaultWalletDep">
+              <div class="relative overflow-hidden rounded-xl shadow border-t-4 border-blue-200 bg-white">
+                <div class="py-10 px-6">
+                  <div class="flex items-center justify-center">
+                    <span class="ml-3 text-base font-medium capitalize">Deposit To Default Wallet</span>
+                  </div>
                 </div>
+              </div>
+            </a>
+            
+            <a href="multiWalletDep">
+              <div class="relative overflow-hidden rounded-xl shadow border-t-4 border-blue-200 bg-white">
+                <div class="py-10 px-6">
+                  <div class="flex items-center justify-center">
+                    <span class="ml-3 text-base  font-medium capitalize">Deposit To Multi-Wallet</span>
+                  </div>
                 </div>
-            </x-splade-form>
+              </div>
+            </a>
+            
+          </div>
         </div>
-    </section>
-
+      </section>
 </x-app-layout>

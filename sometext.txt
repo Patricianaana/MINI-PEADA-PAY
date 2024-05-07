@@ -1,6 +1,8 @@
 pat = patricia99
 lewis = 1234567898
 john = bread123
+lenny = waterbottle
+kimk = mikehunt
 
 
 <select>

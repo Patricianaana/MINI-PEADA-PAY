@@ -76,6 +76,17 @@ Route::middleware('splade')->group(function () {
         {
             return view('transferWallet');
         });
+
+        Route::get('defaultWalletDep', function()
+        {
+            return view('defaultWalletDeposits');
+
+        });
+
+        Route::get('multiWalletDep', function()
+        {
+            return view('multiWalletWallet');
+        });
         
 
         Route::post('user', [UsersController::class, 'depositMoneyToWallet'])->name('deposite');
@@ -89,6 +100,10 @@ Route::middleware('splade')->group(function () {
         Route::get('card', [UsersController::class, 'viewAllWallets'])->name('viewWals');
 
         Route::post('walletToWallet', [UsersController::class, 'walletToWalletMoneyTransfer'])->name('makeTransfer');
+
+        Route::post('defaultWalletDep', [UsersController::class, 'makeDepositsToDefaultWallet'])->name('makeDeposit');
+
+        Route::post('multiWalletDep', [UsersController::class, 'makeMultiWalletDeposits'])->name('multiDeposit');
         });
         
 

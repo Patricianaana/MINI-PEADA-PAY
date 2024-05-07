@@ -10,18 +10,44 @@ use Bavix\Wallet\Services\WalletService;
 
 class UsersController extends Controller
 {
-        public function depositMoneyToWallet(Request $request)
+
+        public function makeDepositsToDefaultWallet(Request $request)
+        {
+            $request->validate([
+                'amount'=>['required'],
+                'notes'=>['required']
+            ]);
+            $user = User::find(auth()->id());
+            if ($user)
+            {
+                $user->deposit($request->amount, ['description' => $request->notes], true);
+                Toast::title($request->amount.' deposited successfully')->autoDismiss(10);
+                return back();
+            }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
+            return back();
+        }
+
+        public function makeMultiWalletDeposits(Request $request)
         {
             $request->validate([
                 'wallet' => ['required', 'exists:wallets,id'],
-                'amount' => ['required']
+                'amount' => ['required'],
+                'notes'=>['required']
             ]);
             $user = User::find(auth()->id());
-            $wallet= Wallet::find($request->wallet);
-            $myWallet = $user->getWallet($wallet->slug);
-            $myWallet->deposit($request->amount, ['description' => $request->notes], true);
-            Toast::title($request->amount.' deposited successfully')->autoDismiss(5);
+            if ($user)
+            {
+                $wallet= Wallet::find($request->wallet);
+                $myWallet = $user->getWallet($wallet->slug);
+                $myWallet->deposit($request->amount, ['description' => $request->notes], true);
+
+                Toast::title($request->amount.' deposited successfully')->autoDismiss(10);
+                return back();
+            }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
             return back();
+
         }
 
         public function withdrawMoneyFromWallet(Request $request)
@@ -32,12 +58,18 @@ class UsersController extends Controller
             ]);
 
             $user = User::first();
-            $wallet = Wallet::find($request->wallet);
-            $myWallet = $user->getWallet($wallet->slug);
-            $myWallet->withdraw($request->amount);
+            if($user)
+            {
+               $wallet = Wallet::find($request->wallet);
+               $myWallet = $user->getWallet($wallet->slug);
+               $myWallet->withdraw($request->amount);
 
-            Toast::title($request->amount.' withdrawn successfully')->autoDismiss(5);
+               Toast::title($request->amount.' withdrawn successfully')->autoDismiss(10);
+               return back();
+            }
+            Toast::danger($request->amount.' transaction failed')->autoDismiss(10);
             return back();
+            
         }
    
         public function transferMoneyToOtherUsers(Request $request)
@@ -63,29 +95,34 @@ class UsersController extends Controller
         }
         
 
-    public function createNewWallet(Request $request)
-{
+        public function createNewWallet(Request $request)
+        {
 
-    $user = User::find(auth()->id());
-    if ($user->wallets()->where('slug', $request->slug)->exists()) {
-        Toast::danger('A wallet with the specified slug already exists.')->autoDismiss(10);
-        return back();
-    }
+            $request->validate([
+                'slug'=>['required'],
+                'name'=>['required']
+            ]);
+           $user = User::find(auth()->id());
+           if ($user->wallets()->where('slug', $request->slug)->exists()) 
+           {
+              Toast::danger('A wallet with the specified slug already exists.')->autoDismiss(10);
+              return back();
+           } 
 
-    if ($user->wallets()->where('name', $request->name)->exists())
-    {
-        Toast::danger('A wallet with the special name already exists.')->autoDismiss(10);
-        return back();
-    }
+           if ($user->wallets()->where('name', $request->name)->exists())
+           {
+              Toast::danger('A wallet with the special name already exists.')->autoDismiss(10);
+              return back();
+           }
 
-    $wallet = $user->createWallet([
-        'name' => $request->name,
-        'slug' => $request->slug,
-    ]);
+           $wallet = $user->createWallet([
+           'name' => $request->name,
+           'slug' => $request->slug,
+         ]);
 
-    Toast::title('New wallet created successfully.')->autoDismiss(10);
-    return back();
-}
+          Toast::title('New wallet created successfully.')->autoDismiss(10);
+          return back();
+       }
 
 
      public function viewAllWallets()

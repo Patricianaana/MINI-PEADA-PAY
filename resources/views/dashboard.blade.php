@@ -25,7 +25,7 @@
             <a href="transferoptions">
               <div class="relative overflow-hidden rounded-xl shadow border-t-4 border-blue-200 bg-white">
                 <div class="py-10 px-6">
-                  <div class="flex items-center">
+                  <div class="flex items-center justify-center">
                     <span class="ml-3 text-base font-medium capitalize">Transfer</span>
                   </div>
                 </div>
@@ -35,7 +35,7 @@
             <a href="user">
               <div class="relative overflow-hidden rounded-xl shadow border-t-4 border-blue-200 bg-white">
                 <div class="py-10 px-6">
-                  <div class="flex items-center">
+                  <div class="flex items-center justify-center">
                     <span class="ml-3 text-base font-medium capitalize">Deposit</span>
                   </div>  
                 </div>
@@ -45,7 +45,7 @@
             <a href="money">
               <div class="relative overflow-hidden rounded-xl shadow border-t-4 border-blue-200 bg-white">
                 <div class="py-10 px-6">
-                  <div class="flex items-center">
+                  <div class="flex items-center justify-center">
                     <span class="ml-3 text-base font-medium capitalize">Withdrawal</span>
                   </div>
                 </div>
@@ -55,7 +55,7 @@
             <a href="card">
               <div class="relative overflow-hidden rounded-xl shadow border-t-4 border-blue-200 bg-white">
                 <div class="py-10 px-6">
-                  <div class="flex items-center mb-2">
+                  <div class="flex items-center justify-center">
                     <span class="ml-3 text-base font-medium capitalize">View Wallets</span>
                   </div>
                 </div>

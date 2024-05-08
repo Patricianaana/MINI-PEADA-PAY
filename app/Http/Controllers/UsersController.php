@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use ProtoneMedia\Splade\Facades\Toast;
 use Bavix\Wallet\Models\Wallet;
-use Bavix\Wallet\Services\WalletService;
+
 
 class UsersController extends Controller
 {
@@ -61,9 +61,17 @@ class UsersController extends Controller
             if($user)
             {
                $wallet = Wallet::find($request->wallet);
-               $myWallet = $user->getWallet($wallet->slug);
-               $myWallet->withdraw($request->amount);
 
+               if($request->amount >= $user->balance)
+               {
+                return Toast::title('insufficient funds')->warning()->autoDismiss(10);
+               }
+               else
+               {
+                $myWallet = $user->getWallet($wallet->slug);
+                $myWallet->withdraw($request->amount);
+               }
+               
                Toast::title($request->amount.' withdrawn successfully')->autoDismiss(10);
                return back();
             }
@@ -82,13 +90,27 @@ class UsersController extends Controller
 
             $sender = User::find(auth()->id());
             $receiver = User::where('number', $request->repnum)->first();
+            
+            if(!$receiver){
+                return Toast::title("receiver number does not exist")->warning()->autoDismiss(10);
+            }
 
             $wallet = Wallet::find($request->wallet);
+            if($request->amount > $sender->balance)
+            {
+                return Toast::title('insufficient funds')->warning()->autoDismiss(10);
+            }
+            else
+            {
+                $myWallet = $sender->getWallet($wallet->slug);
+                // $receiverWallet = $receiver->getWallet('default');
 
-            $myWallet = $sender->getWallet($wallet->slug);
-            // $receiverWallet = $receiver->getWallet('default');
+                $myWallet->transfer($receiver->wallet, $request->amount);
 
-            $myWallet->transfer($receiver->wallet, $request->amount);
+            }
+           
+
+            
 
             Toast::title("{$request->amount} has been sent to {$receiver->name}.")->autoDismiss(10);
             return back();
@@ -141,17 +163,37 @@ class UsersController extends Controller
 
         $user = User::find(auth()->id());
 
-        $receiverWallet= Wallet::find($request->receiver_wallet);
-        $senderWallet = Wallet::find($request->sender_wallet);
+        if($user)
+        {
 
-        $yourWallet = $user->getWallet($receiverWallet->slug);
-        $yourWallet->deposit($request->amount);
 
-        $myWallet = $user->getWallet($senderWallet->slug);
-        $myWallet->withdraw($request->amount);
+            $receiverWallet= Wallet::find($request->receiver_wallet);
+            $senderWallet = Wallet::find($request->sender_wallet);
+            
+           if( $receiverWallet->id === $senderWallet->id)
+           {
+               return  Toast::title(" sorry, you cannot transfer money to the same wallet")->warning()->autoDismiss(10);
+           }
 
-        Toast::title("{$request->amount} has been sent to {$receiverWallet->name}.")->autoDismiss(10);
-        return back();
+
+            if($request->amount > $senderWallet->balance)
+            {
+                return Toast::title("insufficient funds")->warning()->autoDismiss(10);
+            }
+            else
+            {
+                $yourWallet = $user->getWallet($receiverWallet->slug);
+                $yourWallet->deposit($request->amount);
+
+                $myWallet = $user->getWallet($senderWallet->slug);
+                $myWallet->withdraw($request->amount);
+            }
+
+            
+           Toast::title("{$request->amount} has been sent to {$receiverWallet->name}.")->autoDismiss(10);
+           return back();
+       }
      }
 
+        
 }
